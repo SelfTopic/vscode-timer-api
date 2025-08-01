@@ -8,13 +8,13 @@ const router = Router();
 
 router.post("/", async (req, res, next) => {
     const body: VSCodeTimer = req.body
-    console.log(`router body total seconds: ${body.totalSeconds}`)
+    console.log(`router body total seconds: ${body.sessionSeconds}`)
 
     const db = await openDatabase();
 
     const userService = new UserService(db);
 
-    if (!body.id || !body.totalSeconds) {
+    if (!body.id || !body.sessionSeconds) {
         res.json({ ok: false })
         return;
     }
@@ -26,12 +26,9 @@ router.post("/", async (req, res, next) => {
         return;
     }
 
-    console.log(`user total seconds: ${user.total_seconds}, body seconds: ${body.totalSeconds}`)
-    let resultTotalSeconds = body.totalSeconds + (body.totalSeconds - user.total_seconds);
+    console.log(`user total seconds: ${user.total_seconds}, body seconds: ${body.sessionSeconds}`)
+    let resultTotalSeconds = body.sessionSeconds + user.total_seconds;
 
-    if (user.total_seconds > body.totalSeconds) {
-        resultTotalSeconds = user.total_seconds + body.totalSeconds;
-    }   
 
     console.log(`Call user service update: id: ${user.id}, total seconds: ${resultTotalSeconds}`)
     
